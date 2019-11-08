@@ -23,13 +23,21 @@ class MyFrame(wx.Frame):
         my_sizer.Add(self.gpChoice, 0, wx.ALL | wx.EXPAND, 5)
         my_sizer.Add(calculateBtn, 0, wx.ALL | wx.CENTER, 5)
 
-        calculateBtn.Bind(wx.EVT_BUTTON, self.on_press)
+        calculateBtn.Bind(wx.EVT_BUTTON, self.calcBtnPress)
+
+        self.gpChoice.Bind(wx.EVT_CHOICE, self.gpOnChoice)
 
         panel.SetSizer(my_sizer)
         self.Show()
 
-    def on_press(self, event):
+    def calcBtnPress(self, event):
         print("In Development")
+
+    def gpOnChoice(self,event):
+        selectedString = self.gpChoice.GetString(self.gpChoice.GetSelection())
+        selectedIndex = self.gpChoice.GetSelection()
+        print("selected " + selectedString + ".")
+        print(selectedIndex)
 
 if __name__ == '__main__':
     app = wx.App()
