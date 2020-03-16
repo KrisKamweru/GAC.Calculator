@@ -22,35 +22,58 @@ fullProtectionUnitBanners = 1
 unusedSlotBonusBanners = 4
 conquerTerritoryBaseBanners = 120
 
+#Max battle banner scores
+maxShipBattleBanners = 72
+maxSquadBattleBanners = 64
+max3v3SquadBattleBanners = 56
+
 #
 #Classes to hold GP based defence values
 #
 
 #Class 1: 5 versus 5 character squads
 class variables_5v5:
-	gpValues = ['0 - 1.25M', '1.25M - 1.749M', '1.75M - 2.749M', '2.75M - 3.999M', '4M+']
-	gacSquadDefences = [3, 4, 5, 6, 7]
-	gacTerritorries = [3, 4, 4, 4 ,4]
-	gacShipDefences = 1
+	gpValues = ['0 - 1.59M', '1.6M - 2.499M', '2.5M - 3.79M', '3.8M+']
+	gacSquadDefenses = [4, 5, 6, 7]
+	gacTerritorries = [ 4, 4, 4 ,4]
+	gacShipDefenses = 1
 
 #Class 2: 3 versus 3 character squads
 class variables_3v3:
 	gpValues = ['0 - 1.25M', '1.25M - 1.749M', '1.75M - 2.749M', '2.75M - 3.999M', '4M+']
-	gacSquadDefences = [4, 6, 8, 10, 11]
-	gacTerritorries = [3, 4, 4, 4 ,4]
-	gacShipDefences = 1
+	gacSquadDefenses = [4, 6, 8, 10, 11]
+	gacTerritorries = [4, 4, 4 ,4, 4]
+	gacShipDefenses = 1
 
 #Lists to hold the expected response values for the yes or no questions
 inputValidation = ["N", "n", "Y", "y"]
 inputValidationYes = ["Y", "y"]
 inputValidationNo = ["N", "n"]
 
-def inputValidateYesNo( inputValue, question ): #A function to validate yes or no imputs
+def inputValidateYesNo( question ): #A function to validate yes or no imputs
+	
+	inputValue = input(question)
+	
 	while inputValue not in inputValidation:
 			print("Invalid choice. Please enter a valid choice \n\n")
 			inputValue = input(question)
 	return inputValue
-		
+
+def inputValidateIsInteger( question, maxValue ): #A function to validate numerical inputs
+	tryAgain = True
+
+	while(tryAgain == True):
+		try:
+			inputValue = input(question)
+			val = int(inputValue)
+			if (val > maxValue):
+				print("Input number was too high. Please try again. \n\n")
+			
+			else:
+				tryAgain = False
+				return val
+		except ValueError:
+			print("You did not input a number, please try again")
 
 #
 #
@@ -58,7 +81,9 @@ def inputValidateYesNo( inputValue, question ): #A function to validate yes or n
 #
 #
 
+#
 #Get squad size for GAC
+#
 squadSizeChoice = input("Type 1 for 5v5, or 2 for 3v3: ")
 
 #if input is invalid, try again
@@ -74,153 +99,179 @@ while shipsChoice not in ["1", "2"]:
 	print("Invalid choice. Please enter a valid choice \n\n")
 	shipsChoice = input("Type 1 if ships are present, or 2 if they aren't: ")
 
+#
 #Get GP Division
+#
 if(squadSizeChoice == "1"): #5v5
-	print("Choose your GP division: ")
 	for x in range(len(variables_5v5.gpValues)):
 		print(x+1, " ",  variables_5v5.gpValues[x])
-	gpChoice = int(input(": "))
+	gpChoice = inputValidateIsInteger("Choose your GP division from the list above: ", len(variables_5v5.gpValues))
 
 elif(squadSizeChoice == "2"): #3v3
-	print("Choose your GP division: ")
 	for x in range(len(variables_3v3.gpValues)):
 		print(x+1, " ",  variables_3v3.gpValues[x])
-	gpChoice = int(input(": "))
+	gpChoice = inputValidateIsInteger("Choose your GP division from the list above: ", len(variables_3v3.gpValues))
 
 else:
 	print("Something has gone horribly wrong \n\n\n\n\n\n\n") #if the code executes this, something really has gone horribly wrong with my logic :P
 
-print(variables_5v5.gpValues[gpChoice - 1])
+#print(variables_5v5.gpValues[gpChoice - 1])
 
-#Check if all defences were set
+#
+#Get defensive banners
+#
+
+#Check if all defenses were set
 if((squadSizeChoice == "1") and (shipsChoice == "2")): #5v5 - No Ships
-	validation = input("Did you set all " + str(variables_5v5.gacSquadDefences[gpChoice - 1]) +  " defences? (y/n): ")
-	validation = inputValidateYesNo(validation, ("Did you set all " + str(variables_5v5.gacSquadDefences[gpChoice - 1]) +  " defences? (y/n): ")) #Input validation with defeined validation function
+	validation = inputValidateYesNo(("Did you set all " +str(variables_5v5.gacSquadDefenses[gpChoice - 1]) +  " defenses? (y/n): ")) #Input validation with defined validation function
 
 elif((squadSizeChoice == "2") and (shipsChoice == "2")): #3v3 - No Ships
-	validation = input("Did you set all " + str(variables_3v3.gacSquadDefences[gpChoice - 1]) +  " defences? (y/n): ")
-	validation = inputValidateYesNo(validation, ("Did you set all " + str(variables_3v3.gacSquadDefences[gpChoice - 1]) +  " defences? (y/n): ")) #Input validation with defeined validation function
+	validation = inputValidateYesNo(("Did you set all " + str(variables_3v3.gacSquadDefenses[gpChoice - 1]) +  " defenses? (y/n): ")) #Input validation with defined validation function
 
 elif((squadSizeChoice == "1") and (shipsChoice == "1")): #5v5 - With Ships
-	validation = input("Did you set all " + str(variables_5v5.gacSquadDefences[gpChoice - 1]) +  " squad defences and all " + str(variables_5v5.gacShipDefences) + " ship defences? (y/n): ")
-	validation = inputValidateYesNo(validation, ("Did you set all " + str(variables_5v5.gacSquadDefences[gpChoice - 1]) +  " squad defences and all " + str(variables_5v5.gacShipDefences) + " ship defences? (y/n): ")) #Input validation with defeined validation function
+	validation = inputValidateYesNo(("Did you set all " + str(variables_5v5.gacSquadDefenses[gpChoice - 1]) +  " squad defenses and all " + str(variables_5v5.gacShipDefenses) + " ship defenses? (y/n): ")) #Input validation with defined validation function
 
 elif((squadSizeChoice == "2") and (shipsChoice == "1")): #3v3 - With Ships
-		validation = input("Did you set all " + str(variables_3v3.gacSquadDefences[gpChoice - 1]) +  " squad defences and all " + str(variables_3v3.gacShipDefences) + " ship defences? (y/n): ")
-		validation = inputValidateYesNo(validation, ("Did you set all " + str(variables_3v3.gacSquadDefences[gpChoice - 1]) +  " squad defences and all " + str(variables_3v3.gacShipDefences) + " ship defences? (y/n): ")) #Input validation with defeined validation function
+		validation = inputValidateYesNo(("Did you set all " + str(variables_3v3.gacSquadDefenses[gpChoice - 1]) +  " squad defenses and all " + str(variables_3v3.gacShipDefenses) + " ship defenses? (y/n): ")) #Input validation with defined validation function
 
 else:
 	print("Something has gone horribly wrong \n\n\n\n\n\n\n") #if the code executes this, something really has gone horribly wrong with my logic :P
 
-setShipDefences = 0 #Make sure ship defences is always zero unless set otherwise for the sake of defensove banner calculations
+setShipDefenses = 0 #Make sure ship defenses is always zero unless set otherwise for the sake of defensive banner calculations
 
-if validation in inputValidationNo: #If not all defences set, find out how many defences were set
+if validation in inputValidationNo: #If not all defenses set, find out how many defenses were set
 	if((squadSizeChoice == "1") and (shipsChoice == "2")): #5v5 - No Ships
-		setDefences = int(input("How many defences did you set?: "))
-		while(setDefences > variables_5v5.gacSquadDefences[gpChoice - 1]): #Checks if input defences set exceeds the number of defences that can be set for that GP bracket
-			print("That number is too high, please try again \n")
-			setDefences = int(input("How many defences did you set?: "))
+		setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_5v5.gacSquadDefenses[gpChoice - 1])
 		
-		if(setDefences == variables_5v5.gacSquadDefences[gpChoice - 1]): #If the input number of defences is equal to the max possible defenses set, confirm that they did actually set all defences
-			print("Looks like you set all your defences.")
-			validation = input("Did you really set all your defences? (y/n): ")
-			validation = inputValidateYesNo(validation, "Did you really set all your defences? (y/n): ")
-			while validation not in inputValidationYes: #If they did not actually set all defences, prompt for number of defences set again
-				setDefences = int(input("How many defences did you set?: "))
-				while(setDefences > variables_5v5.gacSquadDefences[gpChoice - 1]): #Same validation for input defences exceeding max defences for that GP bracket
-					print("That number is too high, please try again \n")
-					setDefences = int(input("How many defences did you set?: "))
-				if(setDefences == variables_5v5.gacSquadDefences[gpChoice - 1]): #If the input defences set once again is equal to the maximum number of defences of that GP bracket, assume that all defences have been setattr
-					print("Looks like you set all your defences.")
+		if(setdefenses == variables_5v5.gacSquadDefenses[gpChoice - 1]): #If the input number of defenses is equal to the max possible defenses set, confirm that they did actually set all defenses
+			print("Looks like you set all your defenses.")
+			validation = inputValidateYesNo("Did you really set all your defenses? (y/n): ")
+			while validation not in inputValidationYes: #If they did not actually set all defenses, prompt for number of defenses set again
+				setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_5v5.gacSquadDefenses[gpChoice - 1])
+				if(setdefenses == variables_5v5.gacSquadDefenses[gpChoice - 1]): #If the input defenses set once again is equal to the maximum number of defenses of that GP bracket, assume that all defenses have been setattr
+					print("Looks like you set all your defenses.")
 
 	elif((squadSizeChoice == "2") and (shipsChoice == "2")): #3v3 - No Ships
-		setDefences = int(input("How many defences did you set?: "))
-		while(setDefences > variables_3v3.gacSquadDefences[gpChoice - 1]): #Checks if input defences set exceeds the number of defences that can be set for that GP bracket
-			print("That number is too high, please try again \n")
-			setDefences = int(input("How many defences did you set?: "))
+		setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_3v3.gacSquadDefenses[gpChoice - 1])
 		
-		if(setDefences == variables_3v3.gacSquadDefences[gpChoice - 1]): #If the input number of defences is equal to the max possible defenses set, confirm that they did actually set all defences
-			print("Looks like you set all your defences.")
-			validation = input("Did you really set all your defences? (y/n): ")
-			validation = inputValidateYesNo(validation, "Did you really set all your defences? (y/n): ")
-			while validation not in inputValidationYes: #If they did not actually set all defences, prompt for number of defences set again
-				setDefences = int(input("How many defences did you set?: "))
-				while(setDefences > variables_3v3.gacSquadDefences[gpChoice - 1]): #Same validation for input defences exceeding max defences for that GP bracket
-					print("That number is too high, please try again \n")
-					setDefences = int(input("How many defences did you set?: "))
-				if(setDefences == variables_3v3.gacSquadDefences[gpChoice - 1]): #If the input defences set once again is equal to the maximum number of defences of that GP bracket, assume that all defences have been setattr
-					print("Looks like you set all your defences.")
+		if(setdefenses == variables_3v3.gacSquadDefenses[gpChoice - 1]): #If the input number of defenses is equal to the max possible defenses set, confirm that they did actually set all defenses
+			print("Looks like you set all your defenses.")
+			validation = inputValidateYesNo("Did you really set all your defenses? (y/n): ")
+			while validation not in inputValidationYes: #If they did not actually set all defenses, prompt for number of defenses set again
+				setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_3v3.gacSquadDefenses[gpChoice - 1])
+				
+				if(setdefenses == variables_3v3.gacSquadDefenses[gpChoice - 1]): #If the input defenses set once again is equal to the maximum number of defenses of that GP bracket, assume that all defenses have been setattr
+					print("Looks like you set all your defenses.")
 	
 	elif((squadSizeChoice == "1") and (shipsChoice == "1")): #5v5 - With Ships
-		setDefences = int(input("How many defences did you set?: "))
-		while(setDefences > variables_5v5.gacSquadDefences[gpChoice - 1]): #Checks if input defences set exceeds the number of defences that can be set for that GP bracket
-			print("That number is too high, please try again \n")
-			setDefences = int(input("How many defences did you set?: "))
+		setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_5v5.gacSquadDefenses[gpChoice - 1])
 		
-		if(setDefences == variables_5v5.gacSquadDefences[gpChoice - 1]): #If the input number of defences is equal to the max possible defenses set, confirm that they did actually set all defences
-			print("Looks like you set all your defences.")
-			validation = input("Did you really set all your defences? (y/n): ")
-			validation = inputValidateYesNo(validation, "Did you really set all your defences? (y/n): ")
-			while validation not in inputValidationYes: #If they did not actually set all defences, prompt for number of defences set again
-				setDefences = int(input("How many defences did you set?: "))
-				while(setDefences > variables_5v5.gacSquadDefences[gpChoice - 1]): #Same validation for input defences exceeding max defences for that GP bracket
-					print("That number is too high, please try again \n")
-					setDefences = int(input("How many defences did you set?: "))
-				if(setDefences == variables_5v5.gacSquadDefences[gpChoice - 1]): #If the input defences set once again is equal to the maximum number of defences of that GP bracket, assume that all defences have been setattr
-					print("Looks like you set all your defences.")
+		if(setdefenses == variables_5v5.gacSquadDefenses[gpChoice - 1]): #If the input number of defenses is equal to the max possible defenses set, confirm that they did actually set all defenses
+			print("Looks like you set all your defenses.")
+			validation = inputValidateYesNo("Did you really set all your defenses? (y/n): ")
+			while validation not in inputValidationYes: #If they did not actually set all defenses, prompt for number of defenses set again
+				setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_5v5.gacSquadDefenses[gpChoice - 1])
 
-		validationShips = input("Did you set ship defences? (y/n): ")
-		validationShips = inputValidateYesNo(validationShips, "Did you set ship defences? (y/n): ")
+				if(setdefenses == variables_5v5.gacSquadDefenses[gpChoice - 1]): #If the input defenses set once again is equal to the maximum number of defenses of that GP bracket, assume that all defenses have been setattr
+					print("Looks like you set all your defenses.")
+
+		validationShips = inputValidateYesNo("Did you set ship defenses? (y/n): ")
 		if validationShips in inputValidationYes:
-			setShipDefences = variables_5v5.gacShipDefences
+			setShipDefenses = variables_5v5.gacShipDefenses
 		
 		else:
-			setShipDefences = 0
+			setShipDefenses = 0
 
 	elif((squadSizeChoice == "2") and (shipsChoice == "1")): #3v3 - With Ships
-		setDefences = int(input("How many defences did you set?: "))
-		while(setDefences > variables_3v3.gacSquadDefences[gpChoice - 1]): #Checks if input defences set exceeds the number of defences that can be set for that GP bracket
-			print("That number is too high, please try again \n")
-			setDefences = int(input("How many defences did you set?: "))
+		setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_3v3.gacSquadDefenses[gpChoice - 1])
 		
-		if(setDefences == variables_3v3.gacSquadDefences[gpChoice - 1]): #If the input number of defences is equal to the max possible defenses set, confirm that they did actually set all defences
-			print("Looks like you set all your defences.")
-			validation = input("Did you really set all your defences? (y/n): ")
-			validation = inputValidateYesNo(validation, "Did you really set all your defences? (y/n): ")
-			while validation not in inputValidationYes: #If they did not actually set all defences, prompt for number of defences set again
-				setDefences = int(input("How many defences did you set?: "))
-				while(setDefences > variables_3v3.gacSquadDefences[gpChoice - 1]): #Same validation for input defences exceeding max defences for that GP bracket
-					print("That number is too high, please try again \n")
-					setDefences = int(input("How many defences did you set?: "))
-				if(setDefences == variables_3v3.gacSquadDefences[gpChoice - 1]): #If the input defences set once again is equal to the maximum number of defences of that GP bracket, assume that all defences have been setattr
-					print("Looks like you set all your defences.")
+		if(setdefenses == variables_3v3.gacSquadDefenses[gpChoice - 1]): #If the input number of defenses is equal to the max possible defenses set, confirm that they did actually set all defenses
+			print("Looks like you set all your defenses.")
+			validation = inputValidateYesNo("Did you really set all your defenses? (y/n): ")
+			while validation not in inputValidationYes: #If they did not actually set all defenses, prompt for number of defenses set again
+				setdefenses = inputValidateIsInteger("How many defenses did you set?: ", variables_3v3.gacSquadDefenses[gpChoice - 1])
+				
+				if(setdefenses == variables_3v3.gacSquadDefenses[gpChoice - 1]): #If the input defenses set once again is equal to the maximum number of defenses of that GP bracket, assume that all defenses have been setattr
+					print("Looks like you set all your defenses.")
 
-		validationShips = input("Did you set ship defences? (y/n): ")
-		validationShips = inputValidateYesNo(validationShips, "Did you set ship defences? (y/n): ")
+		validationShips = inputValidateYesNo( "Did you set ship defenses? (y/n): ")
 		if validationShips in inputValidationYes:
-			setShipDefences = variables_3v3.gacShipDefences
+			setShipDefenses = variables_3v3.gacShipDefenses
 		
 		else:
-			setShipDefences = 0
+			setShipDefenses = 0
 
-elif validation in ["Y", "y"]: #If all defences have been set, assign variables accordingly
+elif validation in inputValidationYes: #If all defenses have been set, assign variables accordingly
 	if((squadSizeChoice == "1") and (shipsChoice == "2")): #5v5 - No Ships
-		setDefences = variables_5v5.gacSquadDefences[gpChoice - 1]
+		setdefenses = variables_5v5.gacSquadDefenses[gpChoice - 1]
 	
 	elif((squadSizeChoice == "2") and (shipsChoice == "2")): #3v3 - No Ships
-		setDefences = variables_3v3.gacSquadDefences[gpChoice - 1]
+		setdefenses = variables_3v3.gacSquadDefenses[gpChoice - 1]
 
 	elif((squadSizeChoice == "1") and (shipsChoice == "1")): #5v5 - With Ships
-		setDefences = variables_5v5.gacSquadDefences[gpChoice - 1]
-		setShipDefences = variables_5v5.gacShipDefences
+		setdefenses = variables_5v5.gacSquadDefenses[gpChoice - 1]
+		setShipDefenses = variables_5v5.gacShipDefenses
 
 	elif((squadSizeChoice == "2") and (shipsChoice == "1")): #3v3 - With Ships
-		setDefences = variables_3v3.gacSquadDefences[gpChoice - 1]
-		setShipDefences = variables_3v3.gacShipDefences
+		setdefenses = variables_3v3.gacSquadDefenses[gpChoice - 1]
+		setShipDefenses = variables_3v3.gacShipDefenses
 
 else:
 	print("Something has gone horribly wrong \n\n\n\n\n\n\n") #if the code executes this, something really has gone horribly wrong with my logic :P
 
 #Calculate the number of defensive banners
-defensiveBanners = (setSquadDefenceBanners * setDefences) + (setShipDefences * setShipDefenceBanners)
+defensiveBanners = (setSquadDefenceBanners * setdefenses) + (setShipDefenses * setShipDefenceBanners)
 print(str(defensiveBanners))
+
+opponentClearStatus = inputValidateYesNo("Has your opponent full cleared you already? (y/n): ")
+
+opponentBannerScore = 0
+maxOpponentScore = 0
+
+#Calculate the maximum number of offensive banners the opponent can have scored with a perfect run, and add the mac=x defensive banners they can have, to get the maximum score the opponent can get
+if((squadSizeChoice == "1") and (shipsChoice == "2")): #5v5 - No Ships
+	numberSquads = variables_5v5.gacSquadDefenses[gpChoice - 1]
+	numberTerritories = variables_5v5.gacTerritorries[gpChoice - 1]
+	defenseBanners = numberSquads * setSquadDefenceBanners
+	maxOpponentScore = ((numberSquads * maxSquadBattleBanners) + (numberTerritories * conquerTerritoryBaseBanners) + (defenseBanners))
+
+	print(str(maxOpponentScore))
+
+elif((squadSizeChoice == "2") and (shipsChoice == "2")): #3v3 - No Ships
+	numberSquads = variables_3v3.gacSquadDefenses[gpChoice - 1]
+	numberTerritories = variables_3v3.gacTerritorries[gpChoice - 1]
+	defenseBanners = numberSquads * setSquadDefenceBanners
+	maxOpponentScore = ((numberSquads * max3v3SquadBattleBanners) + (numberTerritories * conquerTerritoryBaseBanners) + (defenseBanners))
+
+	print(str(maxOpponentScore))
+
+elif((squadSizeChoice == "1") and (shipsChoice == "1")): #5v5 - With Ships
+	numberSquads = variables_5v5.gacSquadDefenses[gpChoice - 1]
+	numberTerritories = variables_5v5.gacTerritorries[gpChoice - 1]
+	defenseBanners = numberSquads * setSquadDefenceBanners
+	maxOpponentScore = ((numberSquads * maxSquadBattleBanners) + (numberTerritories * conquerTerritoryBaseBanners) + (variables_5v5.gacShipDefenses * maxShipBattleBanners) + (defenseBanners + setShipDefenceBanners))
+
+	print(str(maxOpponentScore))
+
+elif((squadSizeChoice == "2") and (shipsChoice == "1")): #3v3 - With Ships
+	numberSquads = variables_3v3.gacSquadDefenses[gpChoice - 1]
+	numberTerritories = variables_3v3.gacTerritorries[gpChoice - 1]
+	defenseBanners = numberSquads * setSquadDefenceBanners
+	maxOpponentScore = ((numberSquads * maxSquadBattleBanners) + (numberTerritories * conquerTerritoryBaseBanners) + (variables_3v3.gacShipDefenses * maxShipBattleBanners) + (defenseBanners + setShipDefenceBanners))
+
+	print(str(maxOpponentScore))
+
+else:
+	print("Something has gone horribly wrong \n\n\n\n\n\n\n") #if the code executes this, something really has gone horribly wrong with my logic :P
+
+if opponentClearStatus in inputValidationYes:
+	opponentBannerScore = inputValidateIsInteger("How many banners did they score?: ", maxOpponentScore)
+
+elif opponentClearStatus in inputValidationNo:
+	opponentSquadsCleared = inputValidateIsInteger("How many battles have they won?: ", numberSquads)
+	if (opponentSquadsCleared == 0):
+		opponentBannerScore = 0
+	
+	else:
+		opponentBannerScore = inputValidateIsInteger("How many banners have they scored so far?: ", maxOpponentScore)
+	
