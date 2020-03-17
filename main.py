@@ -66,7 +66,9 @@ def inputValidateIsInteger( question, maxValue ): #A function to validate numeri
 		try:
 			inputValue = input(question)
 			val = int(inputValue)
-			if (val > maxValue):
+			if (val < 0):
+				print("Cannot enter negative numbers. Please try again. \n\n")
+			elif (val > maxValue):
 				print("Input number was too high. Please try again. \n\n")
 
 			else:
